@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/frame.css">
+    <% if(style.length > 0){ %>
+        <link rel="stylesheet" href="/css/<%= style%>">
+    <%}%>
+    <script src="/js/frame.js"></script>
+</head>
+<body>
+    <nav id='menu'>
+        <input type='checkbox' id='responsive-menu' onclick='updatemenu()'><label></label>
+        <ul>
+          <li><a href='/'>Sākums</a></li>
+          <li><a href='/join'>Uzņemšana</a></li>
+          <li><a class='dropdown-arrow'>Par skolu</a>
+            <ul class='sub-menus'>
+              <li><a href='/people'>Darbinieki</a></li>
+              <li><a href='/history'>Vēsture</a></li>
+            </ul>
+          </li>
+          <li><a href='/news'>Ziņas</a></li>
+          <li><a class='dropdown-arrow'>Mācības</a>
+            <ul class='sub-menus'>
+              <li><a href='/zpd'>ZPD</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    <header></header><%- include(content) %>
+    <footer></footer>
+</body>
+</html>

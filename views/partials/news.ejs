@@ -1,0 +1,34 @@
+<% const postId = "post-10244"; %>
+<% const postTitle = "Loģikas spēlē “Ogre Puzzle Day” sacentīsies 100 vidusskolēni"; %>
+<% const postUrl = "https://www.ovg.lv/logikas-spele-ogre-puzzle-day-sacentisies-100-vidusskoleni/"; %>
+<% const postDate = "07/02/2024"; %>
+<% const imageUrl = "https://www.ovg.lv/wp-content/uploads/2022/12/Logo-768x432.png"; %>
+<% const imageAlt = "Loģikas spēlē “Ogre Puzzle Day” sacentīsies 100 vidusskolēni"; %>
+<% const postSummary = "Šī gada 1.martā Ogres novada izglītības pārvalde pirmo reizi organizēs loģikas spēli “Ogre Puzzle Day”, kas pulcēs teju 100 aizrautīgākos un zinošākos Ogres pašvaldības vidusskolēnus. Komandām būs jāatrisina 10 loģikas..."; %>
+
+<article id="<%= postId %>" class="blog-entry clr col span_1_of_3 col-1 grid-entry post-<%= postId %> post type-post status-publish format-standard has-post-thumbnail hentry category-aktuali category-svarigi category-macibu-saturs category-pasakumi entry has-media">
+    <div class="blog-entry-inner clr">
+        <div class="thumbnail">
+            <a href="<%= postUrl %>" class="thumbnail-link">
+                <img width="768" height="432" src="<%= imageUrl %>" class="attachment-medium_large size-medium_large wp-post-image default-featured-img" alt="<%= imageAlt %>" itemprop="image" decoding="async" srcset="<%= imageUrl %> 768w" sizes="(max-width: 768px) 100vw, 768px" />
+                <span class="overlay"></span>
+            </a>
+        </div><!-- .thumbnail -->
+        <header class="blog-entry-header clr">
+            <h2 class="blog-entry-title entry-title">
+                <a href="<%= postUrl %>" title="<%= postTitle %>" rel="bookmark"><%= postTitle %></a>
+            </h2><!-- .blog-entry-title -->
+        </header><!-- .blog-entry-header -->
+        <div class="blog-entry-summary clr" itemprop="text">
+            <p>
+                <%= postSummary %>
+            </p>
+        </div><!-- .blog-entry-summary -->
+        <div class="blog-entry-readmore clr">
+            <a href="<%= postUrl %>" title="Continue Reading">Continue Reading<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+        </div><!-- .blog-entry-readmore -->
+        <ul class="meta obem-default clr" aria-label="Post details:">
+            <li class="meta-date" itemprop="datePublished"><span class="screen-reader-text">Post published:</span><i class="icon-clock" aria-hidden="true"></i><%= postDate %></li>
+        </ul>
+    </div><!-- .blog-entry-inner -->
+</article><!-- #post-## -->
