@@ -1,27 +1,6 @@
-// admin.js
 document.addEventListener('DOMContentLoaded', function() {
-    var uploadModal = document.getElementById('uploadModal');
-    var uploadBtn = document.getElementById('uploadBtn');
-    var uploadCloseBtn = uploadModal.getElementsByClassName('close')[0];
     var fileInput = document.getElementById('fileInput');
     var filePreview = document.getElementById('filePreview');
-
-    // Function to open upload modal
-    uploadBtn.onclick = function() {
-        uploadModal.style.display = 'block';
-    }
-
-    // Function to close upload modal
-    uploadCloseBtn.onclick = function() {
-        uploadModal.style.display = 'none';
-    }
-
-    // Close modal when clicked outside
-    window.onclick = function(event) {
-        if (event.target == uploadModal) {
-            uploadModal.style.display = 'none';
-        }
-    }
 
     // Update file preview when file input changes
     fileInput.addEventListener('change', function() {
@@ -47,28 +26,43 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(fileInput.files[0]);
         }
     });
-
-    // Add Blog Modal
-    var addBlogModal = document.getElementById('addBlogModal');
-    var addBlogBtn = document.getElementById('addBlogBtn');
-    var addBlogCloseBtn = addBlogModal.getElementsByClassName('close')[0];
-
-    // Function to open add blog modal
-    addBlogBtn.onclick = function() {
-        addBlogModal.style.display = 'block';
-    }
-
-    // Function to close add blog modal
-    addBlogCloseBtn.onclick = function() {
-        addBlogModal.style.display = 'none';
-    }
-
-    // Close modal when clicked outside
-    window.onclick = function(event) {
-        if (event.target == addBlogModal) {
-            addBlogModal.style.display = 'none';
-        }
-    }
 });
 
+// Function to open a popup
+function openPopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.showModal();
+  }
 
+  // Get all the close buttons inside the popups
+  const closeButtons = document.querySelectorAll('.popup-close');
+
+  // Loop through the close buttons and add an event listener to each one
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Find the parent dialog and close it
+      const dialog = button.closest('dialog');
+      dialog.close();
+    });
+  });
+
+//webpages code part ----------------------------------------------------------------
+
+function deletePage(pageId) {
+    if (confirm("Are you sure you want to delete this page?")) {
+        fetch(`/admin/pages/${pageId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                // If page deleted successfully, remove the row from the table
+                document.getElementById(pageId).remove();
+            } else {
+                console.error('Failed to delete page');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting page:', error);
+        });
+    }
+}

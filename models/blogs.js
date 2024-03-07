@@ -11,4 +11,4 @@ const blogSchema = new mongoose.Schema({
 });
 
 // Create model from schema and export it
-module.exports = mongoose.model('Blog', blogSchema);
+module.exports = mongoose.model('Blogs', blogSchema);

@@ -5,7 +5,7 @@ body {
     flex-direction: column;
 }
 #menu {
-	background: #9D2235;
+	background: #d63c3c;
 	height: 50px;
 	padding-right: 18px;
 	border-radius: 0px;
@@ -66,7 +66,7 @@ body {
 	height: auto;
 	overflow: hidden;
 	width: 170px;
-	background: #BC1F1F;
+	background: #d63c3c;
 	position: absolute;
 	z-index: 99;
 	display: none;
@@ -89,7 +89,7 @@ body {
 }
 @media screen and (max-width: 800px){
 	#menu {position:relative}
-	#menu ul {background:#BC1F1F;position:absolute;top:100%;right:0;left:0;z-index:3;height:auto;display:none;text-align:left;}
+	#menu ul {background:#d63c3c;position:absolute;top:100%;right:0;left:0;z-index:3;height:auto;display:none;text-align:left;}
 	#menu ul.sub-menus {width:100%;position:static;}
 	#menu ul.sub-menus a {padding-left:30px;}
 	#menu li {display:block;float:none;width:auto;}

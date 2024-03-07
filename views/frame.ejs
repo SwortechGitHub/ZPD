@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title><%= title%></title>
     <link rel="stylesheet" href="/css/frame.css">
-    <% if(style.length > 0){ %>
-        <link rel="stylesheet" href="/css/<%= style%>">
+    <% if(css.length > 0){ %>
+        <link rel="stylesheet" href="/css/<%= css%>">
     <%}%>
     <script src="/js/frame.js"></script>
 </head>
@@ -14,23 +14,35 @@
     <nav id='menu'>
         <input type='checkbox' id='responsive-menu' onclick='updatemenu()'><label></label>
         <ul>
-          <li><a href='/'>Sākums</a></li>
-          <li><a href='/join'>Uzņemšana</a></li>
-          <li><a class='dropdown-arrow'>Par skolu</a>
+          <% webPages.forEach(page => { %>
+            <% if (page.parent === null) { %>
+              <li>
+                <a href="<%= page.route %>"><%= page.name %></a>
+              </li>
+            <% }%>
+          <% }); %>
+          <li>
+            <a class='dropdown-arrow'>Macības</a>
             <ul class='sub-menus'>
-              <li><a href='/people'>Darbinieki</a></li>
-              <li><a href='/history'>Vēsture</a></li>
+              <% webPages.filter(childPage => childPage.parent === "Study").forEach(childPage => { %>
+                <li><a href="<%= childPage.route %>"><%= childPage.name %></a></li>
+              <% }); %>
             </ul>
           </li>
-          <li><a href='/news'>Ziņas</a></li>
-          <li><a class='dropdown-arrow'>Mācības</a>
+          <li>
+            <a class='dropdown-arrow'>Skola</a>
             <ul class='sub-menus'>
-              <li><a href='/zpd'>ZPD</a></li>
+              <% webPages.filter(childPage => childPage.parent === "About").forEach(childPage => { %>
+                <li><a href="<%= childPage.route %>"><%= childPage.name %></a></li>
+              <% }); %>
             </ul>
           </li>
         </ul>
       </nav>
-    <header></header><%- include(content) %>
+    <header></header>
+    <% if(content.length > 0){ %>
+      <%- include (content)%>
+    <%}%>
     <footer></footer>
 </body>
 </html>

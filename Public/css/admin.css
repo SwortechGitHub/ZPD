@@ -1,124 +1,115 @@
 /* admin.css */
-
-:root {
-    --text: #181818;
-    --background: #fff;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    padding: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    background-color: #f2f2f2;
     font-family: Arial, sans-serif;
-    background-color: var(--background);
+}
+
+.center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.container {
+    background-color: rgb(255, 255, 255);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    width: fit-content;
     align-items: center;
-    height: 100vh; /* Added to center vertically */
-    color: var(--text);
-}
-
-/* Dark Mode Styles */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --text: #fff;
-        --background: #181818;
-    }
-}
-
-.admin-container {
-    max-width: 800px;
+    justify-content: center;
     padding: 20px;
-    background-color: #ffffff11; /* Background color with opacity */
     border-radius: 5px;
 }
 
-.admin-container h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.options {
+form {
     display: flex;
     flex-direction: column;
 }
 
-button,
-.options a {
-    display: block;
-    margin-bottom: 10px;
-    padding: 6px;
-    background-color: #9D2235;
-    border: #9D2235 solid 5px;
-    color: var(--text);
-    text-decoration: none;
+h2 {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #b53232;
+    border: 2px solid #b53232;
+    color: white;
     border-radius: 5px;
-    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.options a:hover {
-    background-color: #ffffff00; /* Transparent background on hover */
+button:hover {
+    background-color: #b5323200;
+    color: black;
 }
 
-/*-------------------------- Styles for modal -------------------------------*/
-
-/* Styles for modal */
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.477);
-}
-
-/* Modal content */
-.modal-content {
-    max-width: 700px;
-    background-color: var(--background);
-    margin: 15% auto; /* 15% from the top and centered */
+/* Popup styles */
+dialog {
+    border: none;
+    position: fixed;
+    z-index: 1000;
+    background-color: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Close button */
-.close {
-    color: var(--text);
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.popup-close{
+    position: fixed;
+    right: 0;
+    top: 0;
+    margin: 10px;
 }
 
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+/* Backdrop styles */
+dialog::backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
 }
 
-/* Input box styles */
-input[type="text"],
-input[type="file"],
-select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-/*-----------blog-----------*/
-/* Ensure textarea width matches input fields */
-#blogContent {
-    width: calc(100% - 6px); /* Subtract padding and border width */
-}
 
-/* Additional CSS for textarea */
-textarea {
-    resize: none; /* Disable textarea resizing */
-    height: 100px; /* Set desired height */
-    padding: 5px; /* Add padding */
-}
+
+table {
+    table-layout: fixed;
+    width: max-content;
+    border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: center;
+        border-bottom: 2px solid black;
+    }
+
+    th {
+        background-color: #b53232;
+        color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    td input[type="text"],
+    td input[type="checkbox"],
+    td button {
+        width: 100%;
+        box-sizing: border-box;
+    }

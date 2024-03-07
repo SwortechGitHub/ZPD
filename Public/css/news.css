@@ -1,75 +1,26 @@
-.blog-entry {
+
+/* Add your CSS styles for the cards here */
+.blog-card {
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.thumbnail {
-    position: relative;
-    overflow: hidden;
-}
-
-.thumbnail img {
-    width: 100%;
-    height: auto;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.thumbnail:hover .overlay {
-    opacity: 1;
-}
-
-.overlay a {
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.blog-entry-title {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.blog-entry-summary p {
-    margin-bottom: 10px;
-}
-
-.blog-entry-readmore a {
-    color: #9D2235;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.meta {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.meta li {
+    margin: 10px;
+    padding: 10px;
+    min-width: 300px;
+    max-width: 400px;
     display: inline-block;
-    margin-right: 10px;
-    font-size: 14px;
-    color: #777;
+    vertical-align: top;
 }
 
-article{
-    width: 400px;
-    height: auto;
+.blog-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.blog-content {
+    margin-bottom: 10px;
+}
+
+.submission-date {
+    color: #666;
+    font-size: 0.8em;
 }
