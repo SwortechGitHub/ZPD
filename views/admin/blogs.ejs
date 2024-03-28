@@ -1,0 +1,49 @@
+<dialog id="popup1">    
+    <form action="/admin/blogs" method="POST">
+        <div>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        </div>
+        <div>
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea>
+        </div>
+        <div>
+        <label for="eventDate">Event Date:</label>
+        <input type="date" id="eventDate" name="eventDate">
+        </div>
+        <!-- You may want to include additional fields or handle them differently -->
+        <button type="submit">Create Blog</button>
+    </form>
+    <button class="popup-close">Close</button>
+</dialog>
+<% if (blogs.length > 0) { %>
+    <ul>
+      <% blogs.forEach(function(blog) { %>
+        <li>
+          <h2><%= blog.title %></h2>
+          <p>Event Date: <%= blog.eventDate %></p>
+          <p>Author: <%= blog.author.username %></p> <!-- Assuming User model has a 'username' field -->
+          <p>Submission Date: <%= blog.submissionDate %></p>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No blogs found.</p>
+  <% } %>
+
+<script>
+    function openPopup(popupId) {
+        const popup = document.getElementById(popupId);
+        popup.showModal();
+    }
+
+    const closeButtons = document.querySelectorAll('.popup-close');
+
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+        const dialog = button.closest('dialog');
+        dialog.close();
+        });
+    });
+</script>

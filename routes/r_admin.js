@@ -1,207 +1,274 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
-const Pages = require('../models/webpages');
+const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const User = require('../models/User');
 const Blogs = require('../models/blogs');
 
-// Hardcoded admin credentials (for demo purposes)
-const adminCredentials = {
-    username: 'admin',
-    password: '123'
-};
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-const session = require('express-session');
-    // Session
-    router.use(session({
-        secret: 'secret', // Replace with a long, randomly generated string
-        resave: false, // Prevents unnecessary session updates
-        saveUninitialized: true, // Allows uninitialized sessions to be saved
-        cookie: {
-            maxAge: 24 * 60 * 60 * 1000 // Set the session duration to 24 hours
-            // Add 'secure: true' if serving over HTTPS
-        }
-    }));
-
-
-// Inside your Express route for rendering admin.ejs
-router.get('/', async (req, res) => {
-    try {
-        // Check if the admin is logged in
-        if (req.session.loggedIn) {
-            // Query MongoDB to retrieve pages
-            const pages = await Pages.find();
-            const imageNames = req.session.files || [];
-            res.render('admin', { imageNames, pages });
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        let folder;
+        if (file.mimetype.startsWith('image/')) {
+            folder = 'Media_images';
+        } else if (file.mimetype.startsWith('application/pdf') || file.mimetype.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+            folder = 'Documents';
         } else {
-            res.redirect('/admin/login');
+            folder = 'Profile_images';
         }
-    } catch (error) {
-        console.error('Error fetching pages:', error);
-        res.status(500).send('Internal Server Error');
+        cb(null, `Public/uploads/${folder}/`);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname); // Use the original filename
     }
 });
 
-// Login route
-router.get('/login', (req, res) => {
-    res.render('login', {message: ''}); // Render the login form
-});
+const upload = multer({ storage: storage });
 
-// POST request to handle login
-router.post('/login', (req, res) => {
-    const { username, password } = req.body;
 
-    // Check if the credentials are correct
-    if (username === adminCredentials.username && password === adminCredentials.password) {
-        req.session.loggedIn = true; // Set loggedIn flag in session
+// Middleware
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(express.json());
+router.use(express.static('Public'));
 
-        // Retrieve image names from the 'images' folder
-        const imagesFolder = path.join(__dirname, '..','Public', 'uploads' ,'images');
-        fs.readdir(imagesFolder, (err, files) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Internal Server Error');
-            }
-            // Store file names in session storage
-            req.session.files = files;
-            req.session.save(() => {
-                req.session.touch();
-                res.redirect('/admin'); // Redirect to admin panel
-            });
-        });
+// Session configuration
+router.use(session({
+    secret: process.env.SESSION_SECRET || 'long_random_string_here',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === 'production', // Enable secure cookie in production
+        sameSite: 'strict' // Mitigate CSRF attacks by setting strict same-site policy
+    }
+}));
+
+// Authorization middleware
+const isAuthenticated = (req, res, next) => {
+    if (req.session.loggedIn) {
+        next();
     } else {
         res.redirect('/admin/login');
     }
+};
+
+const hasPermission = (permission) => {
+    return (req, res, next) => {
+        if (req.session.user && req.session.user.permissions && req.session.user.permissions[permission]) {
+            next();
+        } else {
+            res.status(403).send('Forbidden');
+        }
+    };
+};
+
+// Routes
+router.get('/', isAuthenticated, (req, res) => {
+    res.render('admin2', { content: "admin/dashboard", session: req.session});
 });
 
-// Logout route
-router.get('/logout', (req, res) => {
-    // Destroy session and remove stored files
-    req.session.destroy((err) => {
+// Route to handle the creation of a new blog
+router.post('/blogs', isAuthenticated, hasPermission('postBlogs'), async (req, res, next) => {
+    try {
+      // Extract the blog data from the request body
+      const { title, content, eventDate } = req.body;
+  
+      // Create a new blog document
+      const newBlog = new Blogs({
+        title,
+        content,
+        eventDate,
+        author: req.session.userId // Assuming you have a way to get the current user's ID from the session
+      });
+  
+      // Save the new blog to the database
+      await newBlog.save();
+  
+      // Redirect back to the list of blogs or to the newly created blog's page
+      res.redirect('/admin/blogs');
+    } catch (error) {
+      // Pass the error to the next middleware for error handling
+      next(error);
+    }
+  });
+
+router.get('/blogs', isAuthenticated, hasPermission('postBlogs'), async (req, res, next) => {
+    try {
+      // Fetch all blogs from the database
+      const blogs = await Blogs.find({});
+  
+      // Render the 'admin2' view and pass the blogs and session data
+      res.render('admin2', { content: "admin/blogs", session: req.session, blogs });
+    } catch (error) {
+      // Pass the error to the next middleware for error handling
+      next(error);
+    }
+  });
+router.get('/pages', isAuthenticated, hasPermission('makePages'), (req, res) => {
+    res.render('admin2', { content: "admin/pages", session: req.session});
+});
+
+router.get('/files', isAuthenticated, hasPermission('uploadFiles'), async (req, res) => {
+    try {
+        // Example: Get list of files from specific folders
+        const mediaImages = await readFilesFromFolder('Media_images');
+        const profileImages = await readFilesFromFolder('Profile_images');
+        const documents = await readFilesFromFolder('Documents');
+
+        res.render('admin2', { content: "admin/files", session: req.session, mediaImages, profileImages, documents });
+    } catch (err) {
+        console.error('Error reading files:', err);
+        res.status(500).send('Error reading files');
+    }
+});
+
+async function readFilesFromFolder(folderName) {
+    return new Promise((resolve, reject) => {
+        const folderPath = path.join(__dirname, '..', 'Public', 'uploads', folderName);
+
+        fs.readdir(folderPath, (err, files) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(files);
+            }
+        });
+    });
+}
+
+// File Upload Route
+router.post('/upload', upload.single('file'), (req, res) => {
+    // Handle file upload
+    const file = req.file;
+    // Process and store the file
+    // You may want to save file metadata in a database
+    res.redirect('/admin/files');
+});
+
+// File Deletion Route
+router.delete('/files/:folder/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '..', 'Public', 'uploads', filename); // Construct the full file path
+
+    // Delete file from storage directory
+    fs.unlink(filePath, (err) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send('Internal Server Error');
+            console.error('Error deleting file:', err);
+            res.status(500).json({ error: 'Error deleting file', message: err.message });
+        } else {
+            console.log('File deleted successfully:', filename);
+            // Fetch the updated list of files
+            fs.readdir(path.join(__dirname, '..', 'Public', 'uploads'), (err, files) => {
+                if (err) {
+                    console.error('Error reading files:', err);
+                    res.status(500).json({ error: 'Error reading files', message: err.message });
+                } else {
+                    // Render the admin files page with the updated file list
+                    res.render('admin2', { content: "admin/files", files: files });
+                }
+            });
         }
-        res.redirect('/admin/login'); // Redirect to login page
     });
 });
 
-// Handle form submission for adding a blog post
-router.post('/add-blog', async (req, res) => {
-    const { blogTitle, blogContent, imageSelect, blogDate } = req.body;
+router.post('/create-user', async (req, res) => {
+    const { username, password, uploadFiles, makePages, postBlogs, manageProfiles } = req.body;
 
+    // Validate input data
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
+    }
+  
     try {
-        // Create a new blog post object
-        const newBlog = new Blogs({
-            title: blogTitle,
-            content: blogContent,
-            imageNames: imageSelect, // Assuming imageSelect is an array of image names
-            submissionDate: blogDate || Date.now() // Use provided date or today's date if not provided
-        });
-
-        // Save the new blog post to the database
-        await newBlog.save();
-
-        // Redirect to admin page or display a success message
-        res.redirect('/admin');
+      const existingUser = await User.findOne({ username });
+  
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const userPermissions = {
+        uploadFiles: uploadFiles || false,
+        makePages: makePages || false,
+        postBlogs: postBlogs || false,
+        manageProfiles: manageProfiles || false,
+      };
+  
+      const user = new User({
+        username,
+        password: hashedPassword,
+        permissions: userPermissions,
+        profilePicture: 'uploads/images/profile_picture.webp', // Update this if you want to handle profile picture uploads
+      });
+  
+      const savedUser = await user.save();
+      res.redirect("/admin/profiles")
     } catch (error) {
-        // Handle errors, such as validation errors or database connection issues
-        console.error('Error adding blog post:', error);
-        res.status(500).send('Internal Server Error');
+      console.error('Error creating user:', error);
+      res.status(500).json({ error: 'An error occurred while creating the user' });
+    }
+  });
+
+router.get('/profiles', isAuthenticated, hasPermission('manageProfiles'), async(req, res) => {
+    try {
+        const users = await User.find();
+        res.render('admin2', { content: "admin/profiles", users: users, session: req.session});
+    } catch (err) {
+        res.status(500).send(err.message);
     }
 });
 
-// Define route to handle form submission
-router.post('/add-page', async (req, res) => {
-    try {
-        const { name, title, parent, finished } = req.body;
-
-        // Create a new page object with the submitted values
-        const page = new Pages({
-            name,
-            route: '/'+name,
-            title,
-            parent,
-            finished: !!finished // Convert string to boolean
-        });
-
-        // Save the page object to the database
-        await page.save();
-
-        // Redirect to some page after successfully adding the page
+router.get('/login', (req, res) => {
+    if (req.session.loggedIn) {
         res.redirect('/admin');
-    } catch (error) {
-        // Handle errors
-        console.error(error);
-        res.status(500).send('Server Error');
+    } else {
+        res.render('login', { message: '' });
     }
 });
 
-// Upload route
-router.post('/upload', (req, res) => {
-    const folder = req.body.folder; // Get the selected folder
-    const file = req.files.file; // Get the uploaded file
-    const originalFileName = file.name; // Get the original file name
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
 
-    // Extract the file name and extension
-    const fileExtension = path.extname(originalFileName); // Get file extension
-    const fileNameWithoutExtension = path.basename(originalFileName, fileExtension); // Get file name without extension
+    try {
+        const user = await User.findOne({ username });
 
-    // Get the new name from the request body or use the original name
-    const newName = req.body.newName || fileNameWithoutExtension;
+        if (user && await bcrypt.compare(password, user.password)) {
+            req.session.loggedIn = true;
+            req.session.user = {
+                username: user.username,
+                permissions: user.permissions // Store user permissions in the session
+            };
 
-    // Create the upload directory if it doesn't exist
-    const uploadDir = path.join(__dirname, 'Public', 'uploads', folder);
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
+            // Store username and image path in the session
+            req.session.username = user.username;
+            req.session.imagePath = user.profilePicture;
+
+            req.session.save(() => {
+                res.redirect('/admin');
+            });
+        } else {
+            res.render('login', { message: 'Invalid username or password' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
+});
 
-    // Construct the new file path with the new name and original extension
-    const newFilePath = path.join(uploadDir, newName + fileExtension);
-
-    // Move the uploaded file to the upload directory with the new name
-    file.mv(newFilePath, (err) => {
+router.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
         if (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
         } else {
-            // Retrieve file names from the upload directory
-            fs.readdir(uploadDir, (err, files) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Internal Server Error');
-                }
-                // Update stored files in session storage
-                req.session.files = files;
-                req.session.save(() => {
-                    req.session.touch();
-                    res.redirect('/admin'); // Redirect to admin panel
-                });
-            });
+            res.redirect('/admin/login');
         }
     });
-});
-
-// Define route to handle DELETE requests to delete a page
-router.delete('/pages/:pageId', async (req, res) => {
-    const { pageId } = req.params;
-
-    try {
-        // Check if page exists
-        const page = await Pages.findById(pageId);
-        if (!page) {
-            return res.status(404).json({ error: 'Page not found' });
-        }
-
-        // Delete page from database
-        await Pages.findByIdAndDelete(pageId);
-
-        // Send success response
-        res.status(200).json({ message: 'Page deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting page:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
 });
 
 module.exports = router;

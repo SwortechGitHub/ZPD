@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin login</title>
-    <link rel="stylesheet" href="/css/login.css">       
+    <link rel="stylesheet" href="/css/login.css">      
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 </head>
 <body>
     <div class="login-container">
@@ -20,9 +21,21 @@
             <div class="input-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
+                <i class="material-icons password-toggle" id="togglePassword">visibility_off</i>
             </div>
             <button type="submit">Login</button>
         </form>
     </div>
+    <script>
+        // JavaScript to toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+    </script>
 </body>
 </html>

@@ -27,4 +27,43 @@ Middlewares
 
 Tried to make own website html builder, but didnt work. Choose a good salutation using CMS GrapeJS
 
+3/102024
+checkbox forms in html return "on" not True
 
+
+Trash?
+router.post('/upload', (req, res) => {
+    const folder = req.body.folder;
+    const file = req.files.file;
+    const originalFileName = file.name;
+
+    const fileExtension = path.extname(originalFileName);
+    const fileNameWithoutExtension = path.basename(originalFileName, fileExtension);
+
+    const newName = req.body.newName || fileNameWithoutExtension;
+
+    const uploadDir = path.join(__dirname, 'Public', 'uploads', folder);
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const newFilePath = path.join(uploadDir, newName + fileExtension);
+
+    file.mv(newFilePath, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        } else {
+            fs.readdir(uploadDir, (err, files) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Internal Server Error');
+                }
+                req.session.files = files;
+                req.session.save(() => {
+                    res.redirect('/admin');
+                });
+            });
+        }
+    });
+});

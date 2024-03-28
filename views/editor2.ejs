@@ -1,77 +1,36 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
-        <script src="https://unpkg.com/grapesjs"></script>
-        <style>
-            body{
-                margin: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="gjs" style="height: 600px;"></div>
-        <script>
-            const editor = grapesjs.init({
-          container: '#gjs',
-          height: '600px',
-          plugins: ['gjs-preset-webpage'],
-          styleManager: {
-            sectors: [
-              {
-                name: 'Custom',
-                open: true,
-                buildProps: ['background', 'background-image', 'background-repeat', 'background-position', 'background-size', 'background-attachment', 'background-color', 'color'],
-                properties: [
-                  'text-align', 'font-size', 'font-family', 'font-weight', 'line-height', 'padding', 'margin', 'border', 'border-radius', 'box-shadow', 'display', 'flex-direction', 'justify-content', 'align-items'
-                ]
-              }
-            ]
-          },
-          blockManager: {
-            blocks: [
-              {
-                id: '1-column',
-                label: '1 Column',
-                category: 'Layout',
-                content: `<div style="display: flex; flex-direction: column; align-items: center;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+    }
+    #gjs{
+      overflow-y: scroll;
+    }
+    .gjs-dashed{
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+  <div id="gjs"></div>
+  <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script src="https://unpkg.com/grapesjs"></script>
+  <script src="https://unpkg.com/grapesjs-blocks-basic@latest"></script>
+  <script type="text/javascript">
+    var editor = grapesjs.init({
+      fromElement: 1,
+      container : '#gjs',
+      style: '.txt-red{color: red}',
+      plugins: ['gjs-blocks-basic']
+    });
+  </script>
+</body>
+</html>
 
-                          </div>`,
-              },
-              {
-                id: '2-column',
-                label: '2 Columns',
-                category: 'Layout',
-                content: `<div style="display: flex; flex-direction: row; align-items: center;">
-                            <div style="width: 45%;">
-                              <p style="text-align: center;">Content</p>
-                            </div>
-                            <div style="width: 45%;">
-                              <p style="text-align: center;">Content</p>
-                            </div>
-                          </div>`,
-              },
-              {
-                id: '3-column',
-                label: '3 Columns',
-                category: 'Layout',
-                content: `<div style="display: flex; flex-direction: row; align-items: center;">
-                            <div style="width: 30%;">
-                              <p style="text-align: center;">Content</p>
-                            </div>
-                            <div style="width: 30%;">
-                              <p style="text-align: center;">Content</p>
-                            </div>
-                            <div style="width: 30%;">
-                              <p style="text-align: center;">Content</p>
-                            </div>
-                          </div>`,
-              }
-            ]}
-            });
-          </script>
-    </body>
-    </html>
+    

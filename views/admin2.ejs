@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            Admin Panel
+        </div>
+        <div class="profile">
+            <img src="<%= session.imagePath %>" alt="Profile Picture">
+            <span class="username"><%= session.username %></span>
+        </div>
+        <ul class="nav">
+            <li><a href="/admin"><i class="material-icons">dashboard</i>Dashboard</a></li>
+            <% if (session.user.permissions && session.user.permissions.uploadFiles) { %>
+                <li><a href="/admin/files"><i class="material-icons">photo_library</i>Gallery/Files</a></li>
+            <% } %>
+            <% if (session.user.permissions && session.user.permissions.makePages) { %>
+                <li><a href="/admin/pages"><i class="material-icons">description</i>Pages</a></li>
+            <% } %>
+            <% if (session.user.permissions && session.user.permissions.postBlogs) { %>
+                <li><a href="/admin/blogs"><i class="material-icons">article</i>Blogs</a></li>
+            <% } %>
+            <% if (session.user.permissions && session.user.permissions.manageProfiles) { %>
+                <li><a href="/admin/profiles"><i class="material-icons">people</i>Profiles</a></li>
+            <% } %>
+            <li class="logout"><a href="/admin/logout"><i class="material-icons">exit_to_app</i><span>Logout</span></a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <%- include(content) %>
+    </div>
+    
+</body>
+</html>

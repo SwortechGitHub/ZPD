@@ -1,0 +1,97 @@
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #333;
+        color: #f0f0f0;
+    }
+
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+</style>
+<div class="container">
+  <dialog id="popup1">
+    <form id="createUserForm" method="post" action="/admin/create-user">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required><br>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required><br>
+      
+      <label for="profilePicture">Profile Picture:</label>
+      <input type="text" id="profilePicture" name="profilePicture"><br>
+      
+      <label>Permissions:</label><br>
+      <input type="checkbox" id="uploadFiles" name="uploadFiles" value="true">
+      <label for="uploadFiles">Upload Files</label><br>
+      
+      <input type="checkbox" id="makePages" name="makePages" value="true">
+      <label for="makePages">Make Pages</label><br>
+      
+      <input type="checkbox" id="postBlogs" name="postBlogs" value="true">
+      <label for="postBlogs">Post Blogs</label><br>
+      
+      <input type="checkbox" id="manageProfiles" name="manageProfiles" value="true">
+      <label for="manageProfiles">Manage Profiles</label><br>
+      
+      <button type="submit">Create User</button>
+    </form>
+      <button class="popup-close">Close</button>
+  </dialog>
+  <div id="errorMessage" style="display: none; color: red;"></div>
+  <div id="Message" style="display: none; color: green;"></div>
+  <h2>User Management</h2>
+  <button onclick="openPopup('popup1')">Add User</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Profile Picture</th>
+        <th>Username</th>
+        <th>Upload Files</th>
+        <th>Make Pages</th>
+        <th>Post Blogs</th>
+        <th>Manage Profiles</th>
+      </tr>
+    </thead>
+    <tbody id="userList">
+      <% users.forEach(user => { %>
+        <tr>
+          <td></td>
+          <td><%= user.username %></td>
+          <td><%= user.permissions.uploadFiles %></td>
+          <td><%= user.permissions.makePages %></td>
+          <td><%= user.permissions.postBlogs %></td>
+          <td><%= user.permissions.manageProfiles %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function openPopup(popupId) {
+    const popup = document.getElementById(popupId);
+    popup.showModal();
+  }
+
+  const closeButtons = document.querySelectorAll('.popup-close');
+
+  closeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const dialog = button.closest('dialog');
+      dialog.close();
+    });
+  });
+</script>

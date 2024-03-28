@@ -1,0 +1,43 @@
+<h1>File Management</h1>
+
+<!-- Upload Form -->
+<form method="post" action="admin/upload" enctype="multipart/form-data">
+    <input type="file" name="file" id="file">
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Media Images</h2>
+<ul>
+    <% mediaImages.forEach(file => { %>
+        <li>
+            <%= file %>
+            <form method="delete" action="/admin/files/Media_images/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
+
+<h2>Profile Images</h2>
+<ul>
+    <% profileImages.forEach(file => { %>
+        <li>
+            <%= file %>
+            <form method="delete" action="/admin/files/Profile_images/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
+
+<h2>Documents</h2>
+<ul>
+    <% documents.forEach(file => { %>
+        <li>
+            <%= file %>
+            <form method="delete" action="/admin/files/Documents/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
