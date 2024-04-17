@@ -1,0 +1,73 @@
+<head>
+    <title>GrapeJS Example</title>
+    <script src="https://unpkg.com/grapesjs"></script>
+    <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/grapesjs-blocks-basic@latest"></script>
+</head>
+<style>
+    body {
+        overflow-y: hidden;
+    }
+    #details h1{
+        line-height: 0%;
+        color: #ddd;
+    }
+    #details input, #details button, #details select{
+       height: 50%;
+       margin-right: 20px;
+    }
+</style>
+<body style="margin: 0;">
+    <div id="gjs"></div>
+    <div id="details" style="display: flex; height: 10%; padding: 20px; background-color: #444;">
+        <button onclick="getcode()">button</button>
+        <h1>Title:</h1><input type="text" id="title">
+        <h1>Event date:</h1><input type="date" id="eventDate">
+        <h1>Finished:</h1><input type="checkbox" id="finished">
+    </div>
+    <script>
+        const editor = grapesjs.init({
+            container : '#gjs',
+            fromElement : true,
+            height : '90%',
+            width : '100%',
+            storageManager: false,
+            plugins: ['gjs-blocks-basic']
+        });
+        //Fetch image URLs from the server
+        fetch('/api/images')
+            .then(response => response.json())
+            .then(imageUrls => {
+                // Add images to GrapeJS Asset Manager
+                imageUrls.forEach((imageUrl, index) => {
+                    editor.AssetManager.add({
+                        category: 'images',
+                        src: imageUrl
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching image URLs:', error));
+    </script>
+    <script>
+        function getcode(){
+            var html = editor.getHtml();
+            var css = editor.getCss();
+            var title = document.getElementById('title').value
+            var eventDate = document.getElementById('eventDate').value
+            var checkbox = document.getElementById('finished');
+            var finished = checkbox.checked
+
+            fetch('/admin/blogs/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({html: html, css: css, title: title, eventDate: eventDate, finished: finished})
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .then(location.href="/admin/blogs")
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>

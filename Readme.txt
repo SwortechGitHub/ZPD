@@ -27,43 +27,21 @@ Middlewares
 
 Tried to make own website html builder, but didnt work. Choose a good salutation using CMS GrapeJS
 
-3/102024
+3/10/2024
 checkbox forms in html return "on" not True
 
+4/7/2024
+Multer doesnt check file type, but trust client sent extension. Should fix in future to make server safe from viruses.
 
-Trash?
-router.post('/upload', (req, res) => {
-    const folder = req.body.folder;
-    const file = req.files.file;
-    const originalFileName = file.name;
+4/11/2024
+Dont use "checkboxes" as function name.
 
-    const fileExtension = path.extname(originalFileName);
-    const fileNameWithoutExtension = path.basename(originalFileName, fileExtension);
+4/12/2024
+Put in wepage name only 1 word without symbols
 
-    const newName = req.body.newName || fileNameWithoutExtension;
+4/15/2024
+".skip(20)" helps in mongoose skip files
+".limit(20)" right now takes from server 20 blogs.
 
-    const uploadDir = path.join(__dirname, 'Public', 'uploads', folder);
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const newFilePath = path.join(uploadDir, newName + fileExtension);
-
-    file.mv(newFilePath, (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            fs.readdir(uploadDir, (err, files) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Internal Server Error');
-                }
-                req.session.files = files;
-                req.session.save(() => {
-                    res.redirect('/admin');
-                });
-            });
-        }
-    });
-});
+4/17/2024
+cache info everytime when admin updates stuff and on server start

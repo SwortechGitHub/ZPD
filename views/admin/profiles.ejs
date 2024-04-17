@@ -1,84 +1,104 @@
 <style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-
-    th {
-        background-color: #333;
-        color: #f0f0f0;
-    }
-
-    img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-    }
+  header{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 60px;
+    color: #fff;
+    background-color: #555555;
+  }
+  button{
+    color: #fff;
+  }
+  table {
+    margin: 40px;
+    width: calc(100% - 80px);
+    border-collapse: collapse;
+  }
+  table .text{
+    padding: 10px;
+    text-align: left;
+  }
+  table .checkbox{
+    width: 50px;
+    padding: 10px;
+    text-align: center;
+  }
+  table td{
+    padding: 10px;
+    border-top: 1px solid #555555;
+  }
+  table .center{
+    text-align: center;
+  }
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
 </style>
-<div class="container">
-  <dialog id="popup1">
-    <form id="createUserForm" method="post" action="/admin/create-user">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required><br>
-      
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br>
-      
-      <label for="profilePicture">Profile Picture:</label>
-      <input type="text" id="profilePicture" name="profilePicture"><br>
-      
-      <label>Permissions:</label><br>
-      <input type="checkbox" id="uploadFiles" name="uploadFiles" value="true">
-      <label for="uploadFiles">Upload Files</label><br>
-      
-      <input type="checkbox" id="makePages" name="makePages" value="true">
-      <label for="makePages">Make Pages</label><br>
-      
-      <input type="checkbox" id="postBlogs" name="postBlogs" value="true">
-      <label for="postBlogs">Post Blogs</label><br>
-      
-      <input type="checkbox" id="manageProfiles" name="manageProfiles" value="true">
-      <label for="manageProfiles">Manage Profiles</label><br>
-      
-      <button type="submit">Create User</button>
-    </form>
-      <button class="popup-close">Close</button>
-  </dialog>
-  <div id="errorMessage" style="display: none; color: red;"></div>
-  <div id="Message" style="display: none; color: green;"></div>
-  <h2>User Management</h2>
-  <button onclick="openPopup('popup1')">Add User</button>
-  <table>
-    <thead>
+
+<header style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>Blogs</h1>
+  <div style="display: flex;">
+    <button style="background-color: Green; margin-right: 10px;" onclick="openPopup('popup1')">Add User</button>
+    <dialog id="popup1">
+      <form id="createUserForm" method="post" action="/admin/create-user">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        
+        <label for="profilePicture">Profile Picture:</label>
+        <input type="text" id="profilePicture" name="profilePicture"><br>
+        
+        <label>Permissions:</label><br>
+        <input type="checkbox" id="uploadFiles" name="uploadFiles" value="true">
+        <label for="uploadFiles">Upload Files</label><br>
+        
+        <input type="checkbox" id="makePages" name="makePages" value="true">
+        <label for="makePages">Make Pages</label><br>
+        
+        <input type="checkbox" id="postBlogs" name="postBlogs" value="true">
+        <label for="postBlogs">Post Blogs</label><br>
+        
+        <input type="checkbox" id="manageProfiles" name="manageProfiles" value="true">
+        <label for="manageProfiles">Manage Profiles</label><br>
+        
+        <button type="submit">Create User</button>
+      </form>
+        <button class="popup-close">Close</button>
+    </dialog>
+    <div id="errorMessage" style="display: none; color: red;"></div>
+    <div id="Message" style="display: none; color: green;"></div>
+  </div>
+</header>
+
+<table>
+  <thead style="background-color: #555555; color: #fff;">
+    <tr>
+      <th >Profile Picture</th>
+      <th class="text">Username</th>
+      <th class="text">Upload Files</th>
+      <th class="text">Make Pages</th>
+      <th class="text">Post Blogs</th>
+      <th class="text">Manage Profiles</th>
+    </tr>
+  </thead>
+  <tbody id="userList">
+    <% users.forEach(user => { %>
       <tr>
-        <th>Profile Picture</th>
-        <th>Username</th>
-        <th>Upload Files</th>
-        <th>Make Pages</th>
-        <th>Post Blogs</th>
-        <th>Manage Profiles</th>
+        <td></td>
+        <td><%= user.username %></td>
+        <td><%= user.permissions.uploadFiles %></td>
+        <td><%= user.permissions.makePages %></td>
+        <td><%= user.permissions.postBlogs %></td>
+        <td><%= user.permissions.manageProfiles %></td>
       </tr>
-    </thead>
-    <tbody id="userList">
-      <% users.forEach(user => { %>
-        <tr>
-          <td></td>
-          <td><%= user.username %></td>
-          <td><%= user.permissions.uploadFiles %></td>
-          <td><%= user.permissions.makePages %></td>
-          <td><%= user.permissions.postBlogs %></td>
-          <td><%= user.permissions.manageProfiles %></td>
-        </tr>
-      <% }); %>
-    </tbody>
-  </table>
-</div>
+    <% }); %>
+  </tbody>
+</table>
 
 <script>
   function openPopup(popupId) {

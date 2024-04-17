@@ -1,43 +1,72 @@
-<h1>File Management</h1>
-
-<!-- Upload Form -->
-<form method="post" action="admin/upload" enctype="multipart/form-data">
-    <input type="file" name="file" id="file">
+<h2>Upload Files:</h2>
+<form action="/admin/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
     <button type="submit">Upload</button>
 </form>
+<script>
+    const form = document.querySelector('form');
 
-<h2>Media Images</h2>
-<ul>
-    <% mediaImages.forEach(file => { %>
-        <li>
-            <%= file %>
-            <form method="delete" action="/admin/files/Media_images/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
-                <button type="submit">Delete</button>
-            </form>
+    form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch('/admin/upload', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('File uploaded successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error uploading file:', error);
+    });
+    });
+</script>
+
+<h2>Images:</h2>
+<ul id="imageList">
+    <% images.forEach(image => { %>
+        <li id="<%= image %>">
+            <%= image %>
+            <button type="button" class="delete-btn" data-type="images" data-filepath="<%= image %>">Delete</button>
         </li>
-    <% }); %>
+    <% }) %>
 </ul>
 
-<h2>Profile Images</h2>
-<ul>
-    <% profileImages.forEach(file => { %>
-        <li>
-            <%= file %>
-            <form method="delete" action="/admin/files/Profile_images/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
-                <button type="submit">Delete</button>
-            </form>
+<h2>Documents:</h2>
+<ul id="documentList">
+    <% documents.forEach(document => { %>
+        <li id="<%= document %>">
+            <%= document %>
+            <button type="button" class="delete-btn" data-type="documents" data-filepath="<%= document %>">Delete</button>
         </li>
-    <% }); %>
+    <% }) %>
 </ul>
 
-<h2>Documents</h2>
-<ul>
-    <% documents.forEach(file => { %>
-        <li>
-            <%= file %>
-            <form method="delete" action="/admin/files/Documents/<%= file %>" onsubmit="return confirm('Are you sure you want to delete this file?');">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    <% }); %>
-</ul>
+<script>
+// Add event listener to the delete buttons
+var deleteButtons = document.querySelectorAll('.delete-btn');
+  deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      var filepath = this.dataset.filepath;
+      var type = this.dataset.type;
+      // Send a DELETE request to the server using fetch
+      fetch(`/admin/files?file=${filepath}&type=${type}`, {
+        method: 'DELETE',
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('File uploaded successfully:', data);
+      })
+      .catch(error => {
+        console.error('Error uploading file:', error);
+      });
+      const parent = document.getElementById(filepath);
+      parent.remove();
+    });
+  });
+</script>

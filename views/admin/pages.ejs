@@ -1,0 +1,120 @@
+<style>
+    header{
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 60px;
+        color: #fff;
+        background-color: #555555;
+    }
+    button{
+        color: #fff;
+    }
+    table {
+        margin: 40px;
+        width: calc(100% - 80px);
+        border-collapse: collapse;
+    }
+    table .text{
+        padding: 10px;
+        text-align: left;
+    }
+    table .checkbox{
+        width: 50px;
+        padding: 10px;
+        text-align: center;
+    }
+    table td{
+        padding: 10px;
+        border-top: 1px solid #555555;
+    }
+    table .center{
+        text-align: center;
+    }
+</style>
+
+<header style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Pages</h1>
+    <div style="display: flex;">
+        <button style="background-color: Green; margin-right: 10px;" onclick="location.href='/admin/pages/create'">Add new</button>
+        <button style="background-color: Red; margin-right: 10px;" onclick="deleting()">Delete</button>
+        <button style="background-color: rgb(175, 175, 15); margin-right: 10px;" onclick="unpublish()">Un publish</button>
+        <button style="background-color: Green;" onclick="publish()">Publish</button>
+    </div>
+</header>
+
+<table>
+    <thead style="background-color: #555555; color: #fff;">
+        <tr>
+            <th class="checkbox">Select</th>
+            <th class="text">Name</th>
+            <th class="text">Title</th>
+            <th class="text">Author</th>
+            <th class="text">Date</th>
+            <th class="checkbox">Published</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% pages.forEach(page => { %>
+            <tr>
+                <td class="center"><input type="checkbox" name="select" value="<%= page._id %>"></td>
+                <td><%= page.name%></td>
+                <td><%= page.title %></td>
+                <td><%= page.author %></td>
+                <td><%= new Date(page.date).toLocaleString() %></td>
+                <td class="center"><input type="checkbox" <%= page.published ? 'checked' : '' %> name="publish" disabled></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<script>
+    const checkboxes = document.getElementsByName('select');
+
+    function checkboxesValue() {
+        let checkedRows = [];
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                checkedRows.push(checkboxes[i].value);
+            }
+        }
+        return checkedRows;
+    }
+
+    function publish(){
+        fetch('/admin/pages/publish', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkboxesValue()),
+        })
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+    }
+        
+    function unpublish() {
+        fetch('/admin/pages/unpublish', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkboxesValue()),
+        })
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+    }
+    
+    function deleting() {
+        fetch('/admin/pages/delete', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checkboxesValue()),
+        })
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+    }
+</script>

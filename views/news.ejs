@@ -1,0 +1,96 @@
+<style>
+    .blog-card {
+            width: 300px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .blog-card .card-header {
+            background-color: #f5f5f5;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .blog-card .card-header h4 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .blog-card .card-body {
+            padding: 16px;
+            background-color: #fff;
+        }
+
+        .blog-card .card-body p {
+            margin: 8px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .blog-card .card-body .event-date,
+        .blog-card .card-body .published-date {
+            color: #999;
+        }
+</style>
+    <div id="blog-cards" style="display: flex; width: 100vw; overflow-x: hidden; flex-wrap: wrap;">
+        <% blogs.forEach(blog => { %>
+            <div class="blog-card" onclick="viewFullBlog('<%= blog._id%>')">
+                <div class="card-header">
+                    <h4><%= blog.title%></h4>
+                </div>
+                <div class="card-body">
+                    <p class="event-date">Event Date: <%= blog.eventDate.toLocaleDateString()%></p>
+                    <p class="published-date">Published Date: <%= blog.date.toLocaleDateString()%></p>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+    <button id="load-more-btn">Load More</button>
+    <script>
+        const viewFullBlog = blogId => {
+            window.location.href = '/news/' + blogId;
+        }
+
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        let currentPage = 1;
+
+        loadMoreBtn.addEventListener('click', async () => {
+            const blogs = await fetch('/news/more?page=' + currentPage, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.json())
+            .then(blogs => {
+                blogs.forEach(blog => {
+                    const blogCard = document.createElement('div');
+                    blogCard.className = 'blog-card';
+                    blogCard.onclick = () => viewFullBlog(blog._id);
+
+                    const cardHeader = document.createElement('div');
+                    cardHeader.className = 'card-header';
+                    const title = document.createElement('h4');
+                    title.textContent = blog.title;
+                    cardHeader.appendChild(title);
+                    blogCard.appendChild(cardHeader);
+
+                    const cardBody = document.createElement('div');
+                    cardBody.className = 'card-body';
+                    const eventDate = document.createElement('p');
+                    eventDate.className = 'event-date';
+                    eventDate.textContent = 'Event Date: ' + new Date(blog.eventDate).toLocaleDateString();
+                    cardBody.appendChild(eventDate);
+                    const publishedDate = document.createElement('p');
+                    publishedDate.className = 'published-date';
+                    publishedDate.textContent = 'Published Date: ' + new Date(blog.date).toLocaleDateString();
+                    cardBody.appendChild(publishedDate);
+                    blogCard.appendChild(cardBody);
+
+                    document.getElementById('blog-cards').appendChild(blogCard);
+                });
+                currentPage++;
+            });
+        });
+    </script>
