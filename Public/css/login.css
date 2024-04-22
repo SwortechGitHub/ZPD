@@ -2,15 +2,15 @@
     max-width: 400px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #f9f9f9;
+    color: #fff;
+    background-color: #333;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .login-container h2 {
     margin-bottom: 20px;
     text-align: center;
-    color: #333;
+    color: #fff;;
 }
 
 .input-group {
@@ -21,23 +21,14 @@
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    color: #333;
+    color: #fff;;
 }
 
 .input-group input {
     width: calc(100% - 40px); /* Adjust width to accommodate eye icon */
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     outline: none; /* Remove input outline */
-}
-
-.password-toggle {
-    position: absolute;
-    top: 50%;
-    right: 5px; /* Adjust right distance */
-    transform: translateY(-50%);
-    cursor: pointer;
 }
 
 .error-message {

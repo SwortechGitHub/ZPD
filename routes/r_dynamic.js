@@ -16,16 +16,20 @@ const fetchPages = async (req, res, next) => {
 
 // Middleware to handle page rendering
 const renderPage = async (req, res, next) => {
-  const page = await Pages.findOne({ route: req.originalUrl });
-  if (page!=null) {
-    res.render('frame', {
-      title: page.title,
-      css: page.css || '',
-      webPages: req.pages,
-      html: page.html || ''
-    });
-  } else {
-    next();
+  try {
+    const page = await Pages.findOne({ route: req.originalUrl, published: true });
+    if (page) {
+      res.render('frame', {
+        title: page.title,
+        css: page.css || '',
+        webPages: req.pages,
+        html: page.html || ''
+      });
+    } else {
+      next();
+    }
+  } catch (err) {
+    next(err);
   }
 };
 

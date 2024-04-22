@@ -64,7 +64,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
-  },
+  }
 });
 const upload = multer({ storage: storage})
 
@@ -150,10 +150,15 @@ router.get('/blogs/create', isAuthenticated, hasPermission('postBlogs'), (req, r
 // Middleware creates webpage and stores it in the database
 router.post('/blogs/create', isAuthenticated, hasPermission('postBlogs'), (req, res) => {
   const { html, css, title, eventDate, finished} = req.body;
-  var blog = new Blogs({ html: html, css: css ,author: req.session.username,eventDate: eventDate, title: title, published: finished });
+  var blog = new Blogs({ html: html, css: css ,author: req.session.username,eventDate: eventDate, title: title, published: finished === 'on' });
   blog.save()
-  .then(() => res.send('Blog saved'))
-  .catch(error => console.error('Error:', error));
+    .then(() => {
+      res.redirect("/admin/blogs");
+    })
+    .catch(error => {
+      console.error('Error saving page:', error);
+      res.status(500).send('Error saving blog');
+    });
 });
 
 /*---------------------------------------------------Pages------------------------------------------------------*/
@@ -210,18 +215,23 @@ router.get('/pages/create', isAuthenticated, hasPermission('makePages'), (req, r
 
 // Middleware creates webpage and stores it in the database
 router.post('/pages/create', isAuthenticated, hasPermission('makePages'), (req, res) => {
-  const { html, css, title, name, finished, parent } = req.body;
-  var page = new Pages({ html: html, css: css , route: '/'+name,author: req.session.username, name: name, title: title, parent: parent, published: finished });
+  const { html, css, title, name, route, finished, parent } = req.body;
+  var page = new Pages({ html: html, css: css, route: '/' + route, author: req.session.username, name: name, title: title, parent: parent, published: finished === 'on' });
   page.save()
-  .then(() => res.send('Page saved'))
-  .catch(error => console.error('Error:', error));
+    .then(() => {
+      res.redirect("/admin/pages");
+    })
+    .catch(error => {
+      console.error('Error saving page:', error);
+      res.status(500).send('Error saving page');
+    });
 });
 
 /*---------------------------------------------------Users------------------------------------------------------*/
 
 // Middlware to create user
 router.post('/create-user', async (req, res) => {
-  const { username, password, uploadFiles, makePages, postBlogs, manageProfiles } = req.body;
+  const { username, password, makePages, postBlogs, manageProfiles } = req.body;
 
   // Validate input data
   if (!username || !password) {
@@ -251,7 +261,7 @@ router.post('/create-user', async (req, res) => {
       profilePicture: 'uploads/images/profile_picture.webp', // Update this if you want to handle profile picture uploads
     });
 
-    const savedUser = await user.save();
+    user.save();
     res.redirect("/admin/profiles")
   } catch (error) {
     console.error('Error creating user:', error);

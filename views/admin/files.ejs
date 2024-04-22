@@ -1,49 +1,143 @@
-<h2>Upload Files:</h2>
-<form action="/admin/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
-    <button type="submit">Upload</button>
-</form>
-<script>
-    const form = document.querySelector('form');
+<style>
+  header {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 60px;
+    color: #fff;
+    background-color: #333;
+  }
 
-    form.addEventListener('submit', function(event) {
-    event.preventDefault();
+  .header-actions {
+    display: flex;
+    align-items: center;
+  }
 
-    const formData = new FormData(form);
+  .file-upload-form {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+  }
 
-    fetch('/admin/upload', {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('File uploaded successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error uploading file:', error);
-    });
-    });
-</script>
+  .file-upload-form h2 {
+    margin-right: 10px;
+  }
 
-<h2>Images:</h2>
-<ul id="imageList">
+  .file-upload-form input[type="file"] {
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+
+  .file-upload-form button[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .file-upload-form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  .file-list-container {
+    display: flex;
+    margin: 20px;
+  }
+
+  .file-list {
+    width: 50%;
+    list-style: none;
+    padding: 0;
+  }
+
+  .file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .delete-btn {
+    background-color: #c00;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .delete-btn:hover {
+    background-color: #a00;
+  }
+</style>
+
+<header style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>Galerija</h1>
+  <div class="header-actions">
+    <div class="file-upload-form">
+      <h2>Augšup ielādēt:</h2>
+      <form action="/admin/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Ielādēt</button>
+      </form>
+    </div>
+    <!-- Additional actions or navigation can go here -->
+  </div>
+</header>
+
+<div class="file-list-container">
+  <h2>Images:</h2>
+  <ul id="imageList" class="file-list">
     <% images.forEach(image => { %>
-        <li id="<%= image %>">
-            <%= image %>
-            <button type="button" class="delete-btn" data-type="images" data-filepath="<%= image %>">Delete</button>
-        </li>
+      <li id="<%= image %>">
+        <span><%= image %></span>
+        <button type="button" class="delete-btn" data-type="images" data-filepath="<%= image %>">Dzēst</button>
+      </li>
     <% }) %>
-</ul>
+  </ul>
 
-<h2>Documents:</h2>
-<ul id="documentList">
+  <h2>Documents:</h2>
+  <ul id="documentList" class="file-list">
     <% documents.forEach(document => { %>
-        <li id="<%= document %>">
-            <%= document %>
-            <button type="button" class="delete-btn" data-type="documents" data-filepath="<%= document %>">Delete</button>
-        </li>
+      <li id="<%= document %>">
+        <span><%= document %></span>
+        <button type="button" class="delete-btn" data-type="documents" data-filepath="<%= document %>">Dzēst</button>
+      </li>
     <% }) %>
-</ul>
+  </ul>
+</div>
+
+<script>
+  const form = document.querySelector('form');
+
+  form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const formData = new FormData(form);
+
+  fetch('/admin/upload', {
+      method: 'POST',
+      body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('File uploaded successfully:', data);
+  })
+  .catch(error => {
+      console.error('Error uploading file:', error);
+  });
+  });
+</script>
 
 <script>
 // Add event listener to the delete buttons

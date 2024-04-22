@@ -8,34 +8,32 @@
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
+    <%- include("partials/toast.ejs")%>
+
     <div class="sidebar">
-        <div class="logo">
-            Admin Panel
-        </div>
         <div class="profile">
             <img src="<%= session.imagePath %>" alt="Profile Picture">
             <span class="username"><%= session.username %></span>
         </div>
         <ul class="nav">
-            <li><a href="/admin"><i class="material-icons">dashboard</i>Dashboard</a></li>
+            <li><a href="/admin"><i class="material-icons">dashboard</i>Tīmekļa vietne</a></li>
             <% if (session.user.permissions && session.user.permissions.uploadFiles) { %>
-                <li><a href="/admin/files"><i class="material-icons">photo_library</i>Gallery/Files</a></li>
+                <li><a href="/admin/files"><i class="material-icons">photo_library</i>Galerija</a></li>
             <% } %>
             <% if (session.user.permissions && session.user.permissions.makePages) { %>
-                <li><a href="/admin/pages"><i class="material-icons">description</i>Pages</a></li>
+                <li><a href="/admin/pages"><i class="material-icons">description</i>Tīmekļa lapas</a></li>
             <% } %>
             <% if (session.user.permissions && session.user.permissions.postBlogs) { %>
-                <li><a href="/admin/blogs"><i class="material-icons">article</i>Blogs</a></li>
+                <li><a href="/admin/blogs"><i class="material-icons">article</i>Ziņas</a></li>
             <% } %>
             <% if (session.user.permissions && session.user.permissions.manageProfiles) { %>
-                <li><a href="/admin/profiles"><i class="material-icons">people</i>Profiles</a></li>
+                <li><a href="/admin/profiles"><i class="material-icons">people</i>Pārvaldītāji</a></li>
             <% } %>
-            <li class="logout"><a href="/admin/logout"><i class="material-icons">exit_to_app</i><span>Logout</span></a></li>
+            <li class="logout"><a href="/admin/logout"><i class="material-icons">exit_to_app</i><span>Beigt darbu</span></a></li>
         </ul>
     </div>
     <div class="content">
         <%- include(content) %>
     </div>
-    
 </body>
 </html>

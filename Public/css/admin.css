@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color:#f0f0f0;
+    background-color: #f0f0f0;
 }
 
 .sidebar {
@@ -14,54 +14,14 @@ body {
     background-color: #333;
     color: #fff;
     padding-top: 20px;
+    box-sizing: border-box;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.nav {
-    list-style: none;
-    padding: 0;
-}
-
-.nav li {
-    margin-bottom: 10px;
-}
-
-.nav li a {
-    color: #fff;
-    text-decoration: none;
-    display: block;
-    padding: 10px;
-    transition: all 0.3s ease;
-}
-
-.nav li a:hover {
-    background-color: #555;
-}
-
-.active {
-    background-color: #555;
-}
-
-.content {
-    margin-left: 250px;
-    padding: 0px;
-}
-
-.icon {
-    margin-right: 10px;
-}
 .profile {
     display: flex;
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #ccc;
-    border-top: 1px solid #ccc;
 }
 
 .profile img {
@@ -74,6 +34,11 @@ body {
 .username {
     font-weight: bold;
     color: #f0f0f0;
+}
+
+.nav {
+    list-style: none;
+    padding: 0;
 }
 
 .nav li {
@@ -99,5 +64,37 @@ body {
 }
 
 .logout a {
-    color: #c00!important;
+    color: #c00 !important;
+}
+
+.content {
+    margin-left: 250px;
+    box-sizing: border-box;
+}
+
+/* Additional styles for better spacing and readability */
+.sidebar, .content {
+    overflow-y: auto; /* Add a scrollbar if the content overflows */
+}
+
+.sidebar {
+    padding-bottom: 20px; /* Add some padding at the bottom for better spacing */
+}
+
+.nav li a {
+    border-radius: 5px; /* Rounded corners for better visual appeal */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .content {
+        margin-left: 0;
+        margin-top: 250px; /* Adjust this value to match the height of your sidebar */
+    }
 }

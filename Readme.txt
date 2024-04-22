@@ -1,7 +1,3 @@
-<% finishedWebPages.forEach(webPage => { %>
-    <li><a href="<%= webPage.route %>"><%= webPage.name %></a></li>
-    <% }); %>
-
 Quill is programma, kas atļauj manikulēt ar tekstu. Es izvēlējos Quill, jo tā bija vienīgā programmu, ko varēja implamentēt projektā ļoti ātri.
 
 Es limitēšu admina iespēju pievienot sadaļas, jo tagadējā skolas mājaslapā pārāk daudz sadaļas ar mazs saturu.

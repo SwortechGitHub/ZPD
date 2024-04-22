@@ -1,57 +1,122 @@
+<link rel="stylesheet" href="css/content.css">
+<script src="https://unpkg.com/grapesjs"></script>
+<link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet">
+<script src="https://unpkg.com/grapesjs-blocks-basic@latest"></script>
+<script src="/js/grapesjs-blocks-table.min.js"></script>
 <style>
-    header{
-        padding: 0;
+    .checkbox-custom {
+        position: relative;
+        width: 20px; /* Adjust the size as needed */
+        height: 20px; /* Adjust the size as needed */
+        border-radius: 4px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+    }
+
+    .checkbox-custom:checked {
+        background-color: #28a745; /* Green background for checked state */
+    }
+
+    .checkbox-custom:checked::after {
+        content: '\2713'; /* Checkmark character */
+        color: #fff;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px; /* Adjust the size as needed */
+        line-height: 1;
+    }
+
+    .checkbox-custom:not(:checked)::after {
+        content: 'X'; /* X character for unchecked state */
+        color: #dc3545;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px; /* Adjust the size as needed */
+        line-height: 1;
+    }
+</style>
+<style>
+    body {
         margin: 0;
-        width: 100%;
-        height: 60px;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+    #gjs {
+        height: 90vh;
+    }
+    #details {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #444;
         color: #fff;
-        background-color: #555555;
+        height: 10vh;
     }
-    button{
+    #details h1 {
+        margin: 0 10px 0 0;
+        font-size: 16px;
+    }
+    #details input,
+    #details select {
+        height: 30px;
+        margin-right: 50px;
+        padding: 5px;
+        border: none;
+        border-radius: 3px;
+    }
+    #details button {
         color: #fff;
+        border: none;
+        border-radius: 5px;
+        margin-right: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        background-color: var(--button-bg-color);
     }
-    table {
-        margin: 40px;
-        width: calc(100% - 80px);
-        border-collapse: collapse;
+
+    #details button:hover {
+        background-color: var(--button-hover-bg-color);
     }
-    table .text{
-        padding: 10px;
-        text-align: left;
-    }
-    table .checkbox{
-        width: 50px;
-        padding: 10px;
-        text-align: center;
-    }
-    table td{
-        padding: 10px;
-        border-top: 1px solid #555555;
-    }
-    table .center{
-        text-align: center;
+
+    dialog {
+        width: 85vw;
+        height: 93vh;
+        margin-top: 7vh;
+        margin-left: 15vw;
+        padding: 0;
+        overflow-y: hidden;
+        outline: none;
+        border: none;
     }
 </style>
 
 <header style="display: flex; justify-content: space-between; align-items: center;">
-    <h1>Pages</h1>
+    <h1>Tīmekļa lapas</h1>
     <div style="display: flex;">
-        <button style="background-color: Green; margin-right: 10px;" onclick="location.href='/admin/pages/create'">Add new</button>
-        <button style="background-color: Red; margin-right: 10px;" onclick="deleting()">Delete</button>
-        <button style="background-color: rgb(175, 175, 15); margin-right: 10px;" onclick="unpublish()">Un publish</button>
-        <button style="background-color: Green;" onclick="publish()">Publish</button>
+        <button style="--button-bg-color: #007BFF; --button-hover-bg-color: #0056b3;" onclick="openPopup()">Jauna lapa</button>
+        <button style="--button-bg-color: #dc3545; --button-hover-bg-color: #b02a37;" onclick="deleting()">Izdzēst</button>
+        <button style="--button-bg-color: #ffc107; --button-hover-bg-color: #d39e00;" onclick="unpublish()">Nepabeigts</button>
+        <button style="--button-bg-color: #28a745; --button-hover-bg-color: #218838;" onclick="publish()">Pabeigts</button>
     </div>
 </header>
 
 <table>
-    <thead style="background-color: #555555; color: #fff;">
+    <thead>
         <tr>
-            <th class="checkbox">Select</th>
-            <th class="text">Name</th>
-            <th class="text">Title</th>
-            <th class="text">Author</th>
-            <th class="text">Date</th>
-            <th class="checkbox">Published</th>
+            <th class="checkbox">Izvēlētas</th>
+            <th class="text">Nosaukums</th>
+            <th class="text">Saite</th>
+            <th class="text">Saturs</th>
+            <th class="text">Autors</th>
+            <th class="text">Izveidots</th>
+            <th class="checkbox">Pabeigts</th>
         </tr>
     </thead>
     <tbody>
@@ -59,62 +124,145 @@
             <tr>
                 <td class="center"><input type="checkbox" name="select" value="<%= page._id %>"></td>
                 <td><%= page.name%></td>
+                <td><%= page.route%></td>
                 <td><%= page.title %></td>
                 <td><%= page.author %></td>
                 <td><%= new Date(page.date).toLocaleString() %></td>
-                <td class="center"><input type="checkbox" <%= page.published ? 'checked' : '' %> name="publish" disabled></td>
+                <td class="center"><input type="checkbox" class="checkbox-custom" <%= page.published ? 'checked' : '' %> name="publish" disabled></td>
             </tr>
         <% }) %>
     </tbody>
 </table>
 
+<dialog id="popup1">
+    <div id="gjs"></div>
+    <form id="details" action="/admin/pages/create" method="POST">
+        <h1>Nosaukums:</h1><input type="text" name="name" required>
+        <h1>Saite:</h1><input type="text" name="route" required>
+        <h1>Virsraksts:</h1><input type="text" name="title" required>
+        <h1>Grupa:</h1><select name="parent">
+            <option value="none">Neviena</option>
+            <option value="Macibas">Mācības</option>
+            <option value="Skola">Skola</option>
+        </select>
+        <h1>Pabeigts:</h1><input type="checkbox" id="finished" name="finished">
+        <input type="hidden" name="html" id="htmlInput">
+        <input type="hidden" name="css" id="cssInput">
+        <button style="--button-bg-color: #28a745; --button-hover-bg-color: #218838;" type="submit">Izveidot</button>
+    </form>
+</dialog>
+
 <script>
-    const checkboxes = document.getElementsByName('select');
+    const editor = grapesjs.init({
+    container: '#gjs',
+    fromElement: true,
+    height: '90%',
+    width: '100%',
+    storageManager: false,
+    plugins: ['gjs-blocks-basic', 'grapesjs-blocks-table']
+});
 
-    function checkboxesValue() {
-        let checkedRows = [];
+fetch('/api/images')
+    .then(response => response.json())
+    .then(imageUrls => {
+        // Add images to GrapeJS Asset Manager
+        imageUrls.forEach((imageUrl, index) => {
+            editor.AssetManager.add({
+                category: 'images',
+                src: imageUrl
+            });
+        });
+    })
+    .catch(error =>{
+        console.error('Error fetching image URLs:', error)
+        showToast('Problēma iegūt attēlus, jaunu lapu veidošanai.')
+    });
 
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                checkedRows.push(checkboxes[i].value);
-            }
-        }
-        return checkedRows;
-    }
 
-    function publish(){
-        fetch('/admin/pages/publish', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkboxesValue()),
-        })
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
-    }
-        
-    function unpublish() {
-        fetch('/admin/pages/unpublish', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkboxesValue()),
-        })
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
-    }
+document.getElementById('details').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
     
-    function deleting() {
-        fetch('/admin/pages/delete', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkboxesValue()),
-        })
-        .then(response => response.json())
-        .catch(error => console.error('Error:', error));
+    document.getElementById('htmlInput').value = editor.getHtml();
+    document.getElementById('cssInput').value = editor.getCss();
+
+    this.submit();
+});
+
+const checkboxes = document.getElementsByName('select');
+
+function checkboxesValue() {
+    let checkedRows = [];
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            checkedRows.push(checkboxes[i].value);
+        }
     }
+    return checkedRows;
+}
+
+function publish(){
+    fetch('/admin/pages/publish', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(checkboxesValue()),
+    })
+    .then(response =>{
+        response.json()
+        showToast('Pabeidzi tīmekļa lapu, atjaunini lapu')
+    })
+    .catch(error => {
+        console.error('Error:', error)
+        showToast('Problēma pabeigt tīmekļa lapu.')
+    });
+}
+    
+function unpublish() {
+    fetch('/admin/pages/unpublish', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(checkboxesValue()),
+    })
+    .then(response =>{
+        response.json()
+        showToast('Noņēmi pabeigts statusu tīmekļa lapai, atjaunini lapu.')
+    })
+    .catch(error => {
+        console.error('Error:', error)
+        showToast('Problēma nepabeigt tīmekļa lapu.')
+    });
+}
+
+function deleting() {
+    fetch('/admin/pages/delete', {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(checkboxesValue()),
+    })
+    .then(response =>{
+        response.json()
+        showToast('Izdzēsta tīmekļa lapa, atjaunini lapu.')
+    })
+    .catch(error => {
+        console.error('Error:', error)
+        showToast('Problēma izdzēst tīmekļa lapu.')
+    });
+}
+
+function openPopup() {
+  let popup = document.getElementById("popup1");
+  popup.showModal();
+}
+const popup = document.getElementById("popup1");
+    popup.addEventListener('click', () => popup.close());
+const gjs_div= document.getElementById('gjs');
+    gjs_div.addEventListener('click', (event) => event.stopPropagation());
+const form = document.getElementById('details');
+    form.addEventListener('click', (event) => event.stopPropagation());
 </script>

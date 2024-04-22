@@ -57,19 +57,27 @@ app.use(dynRouter);
 const adminRouter = require('./routes/r_admin');
 app.use('/admin', adminRouter);
 
-app.get('/news', async(req, res) => {
-  const pages = await Pages
-    .find({ published: true })
-    .select(['name','route','title','parent']);
-  const blogs = await Blogs
-    .find({ published: true })
-    .limit(2)
-    .select(['_id', 'title', 'eventDate', 'date']);
-  res.render('news', {
-    title: 'Ziņas',
-    webPages: pages,
-    blogs: blogs
-  });
+app.get('/news', async (req, res) => {
+  try {
+    const pages = await Pages
+      .find({ published: true })
+      .select(['name', 'route', 'title', 'parent']);
+
+    const blogs = await Blogs
+      .find({ published: true })
+      .sort({ eventDate: -1 })
+      .limit(2)
+      .select(['_id', 'title', 'eventDate', 'date']);
+
+    res.render('news', {
+      title: 'Ziņas',
+      webPages: pages,
+      blogs: blogs
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
 });
 app.get('/news/more', async (req, res) => {
   const currentPage = req.query.page

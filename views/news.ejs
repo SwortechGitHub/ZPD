@@ -42,8 +42,8 @@
                     <h4><%= blog.title%></h4>
                 </div>
                 <div class="card-body">
-                    <p class="event-date">Event Date: <%= blog.eventDate.toLocaleDateString()%></p>
-                    <p class="published-date">Published Date: <%= blog.date.toLocaleDateString()%></p>
+                    <p class="event-date">Event Date: <%= new Date(blog.eventDate).getDate()%>.<%= ('0' + (new Date(blog.eventDate).getMonth()+1)).slice(-2)%>.<%= new Date(blog.eventDate).getFullYear() %></p>
+                    <p class="published-date">Published Date: <%= new Date(blog.date).getDate()%>.<%= ('0' + (new Date(blog.date).getMonth()+1)).slice(-2)%>.<%= new Date(blog.date).getFullYear() %></p>
                 </div>
             </div>
         <% }); %>

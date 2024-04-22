@@ -3,39 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin login</title>
-    <link rel="stylesheet" href="/css/login.css">      
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <title>Pārvaldītāja ielogošanās logs</title>
+    <style>
+        .login-container {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%);
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            color: #fff;
+            background-color: #333;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #fff;;
+        }
+
+        .input-group input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            background-color: var(--button-bg-color);
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
-        <h2>Login</h2>
-        <% if (message) { %>
-            <p class="error-message"><%= message %></p>
-        <% } %>
         <form action="/admin/login" method="POST">
             <div class="input-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">Vārds:</label>
+                <input type="text" id="username" name="username" autocomplete="username" required>
             </div>
             <div class="input-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <i class="material-icons password-toggle" id="togglePassword">visibility_off</i>
+                <label for="password">Parole:</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
             </div>
-            <button type="submit">Login</button>
+            <button style="--button-bg-color: #28a745; --button-hover-bg-color: #218838;" type="submit">Ielogoties</button>
         </form>
     </div>
-    <script>
-        // JavaScript to toggle password visibility
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.textContent = type === 'password' ? 'visibility_off' : 'visibility';
-        });
-    </script>
 </body>
 </html>

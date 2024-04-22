@@ -4,45 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title%></title>
+    <link rel="icon" type="image/x-icon" href="/images/logo.png">
     <link rel="stylesheet" href="/css/frame.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="/js/frame.js"></script>
 </head>
 <body>
   <% if(css.length > 0){ %>
     <%- "<style>"+css+"</style>"%>
     <%}%>
-    <nav id='menu'>
-        <input type='checkbox' id='responsive-menu' onclick='updatemenu()'><label></label>
-        <ul>
-          <% webPages.forEach(page => { %>
-            <% if (page.parent === "none") { %>
-              <li>
-                <a href="<%= page.route %>"><%= page.name %></a>
-              </li>
-            <% }%>
-          <% }); %>
-          <li>
-            <a class='dropdown-arrow'>Macības</a>
-            <ul class='sub-menus'>
-              <% webPages.filter(childPage => childPage.parent === "Macibas").forEach(childPage => { %>
-                <li><a href="<%= childPage.route %>"><%= childPage.name %></a></li>
-              <% }); %>
-            </ul>
-          </li>
-          <li>
-            <a class='dropdown-arrow'>Skola</a>
-            <ul class='sub-menus'>
-              <% webPages.filter(childPage => childPage.parent === "Skola").forEach(childPage => { %>
-                <li><a href="<%= childPage.route %>"><%= childPage.name %></a></li>
-              <% }); %>
-            </ul>
-          </li>
-        </ul>
-      </nav>
-    <header></header>
+  <%- include("partials/nav.ejs")%>
+  <header></header>
+  <div style="overflow-x: hidden;">
     <% if(html.length > 0){ %>
       <%- html %>
-    <% } %>
-    <footer></footer>
+      <% } %>
+  </div>
+  <%- include("partials/footer.ejs")%>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

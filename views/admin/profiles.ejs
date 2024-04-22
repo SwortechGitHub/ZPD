@@ -1,74 +1,68 @@
+<link rel="stylesheet" href="css/content.css">
 <style>
-  header{
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 60px;
-    color: #fff;
-    background-color: #555555;
+  .header-actions {
+    display: flex;
+    align-items: center;
   }
-  button{
-    color: #fff;
+
+  .blog-actions {
+    display: flex;
+    margin-left: 20px;
   }
-  table {
-    margin: 40px;
-    width: calc(100% - 80px);
-    border-collapse: collapse;
-  }
-  table .text{
-    padding: 10px;
-    text-align: left;
-  }
-  table .checkbox{
-    width: 50px;
-    padding: 10px;
-    text-align: center;
-  }
-  table td{
-    padding: 10px;
-    border-top: 1px solid #555555;
-  }
-  table .center{
-    text-align: center;
-  }
+
   img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
   }
+
+  .popup-close {
+    background-color: red;
+    margin-top: 10px;
+  }
+
+  .popup-close:hover {
+    background-color: darkred;
+  }
+
+  .allowed {
+    color: green;
+  }
+
+  .not-allowed {
+    color: red;
+  }
+
 </style>
 
 <header style="display: flex; justify-content: space-between; align-items: center;">
-  <h1>Blogs</h1>
-  <div style="display: flex;">
-    <button style="background-color: Green; margin-right: 10px;" onclick="openPopup('popup1')">Add User</button>
+  <h1>Pārvaldītāji</h1>
+  <div class="header-actions">
+    <button style="--button-bg-color: #007BFF; --button-hover-bg-color: #0056b3;" onclick="openPopup('popup1')">Jauns lietotājs</button>
     <dialog id="popup1">
       <form id="createUserForm" method="post" action="/admin/create-user">
-        <label for="username">Username:</label>
+        <label for="username">Vārds:</label>
         <input type="text" id="username" name="username" required><br>
         
-        <label for="password">Password:</label>
+        <label for="password">Parole:</label>
         <input type="password" id="password" name="password" required><br>
         
-        <label for="profilePicture">Profile Picture:</label>
-        <input type="text" id="profilePicture" name="profilePicture"><br>
-        
-        <label>Permissions:</label><br>
+        <label>Piekļuves:</label><br>
         <input type="checkbox" id="uploadFiles" name="uploadFiles" value="true">
-        <label for="uploadFiles">Upload Files</label><br>
+        <label for="uploadFiles">Galerija</label><br>
         
         <input type="checkbox" id="makePages" name="makePages" value="true">
-        <label for="makePages">Make Pages</label><br>
+        <label for="makePages">Tīmekļa lapas</label><br>
         
         <input type="checkbox" id="postBlogs" name="postBlogs" value="true">
-        <label for="postBlogs">Post Blogs</label><br>
+        <label for="postBlogs">Ziņas</label><br>
         
         <input type="checkbox" id="manageProfiles" name="manageProfiles" value="true">
-        <label for="manageProfiles">Manage Profiles</label><br>
+        <label for="manageProfiles">Pārvaldītāji</label><br>
         
-        <button type="submit">Create User</button>
+        <button style="--button-bg-color: Green; --button-hover-bg-color: DarkGreen;" type="submit">Izveidot</button>
       </form>
-        <button class="popup-close">Close</button>
+      <button class="popup-close" onclick="closePopup('popup1')">Close</button>
     </dialog>
     <div id="errorMessage" style="display: none; color: red;"></div>
     <div id="Message" style="display: none; color: green;"></div>
@@ -76,25 +70,33 @@
 </header>
 
 <table>
-  <thead style="background-color: #555555; color: #fff;">
+  <thead>
     <tr>
-      <th >Profile Picture</th>
-      <th class="text">Username</th>
-      <th class="text">Upload Files</th>
-      <th class="text">Make Pages</th>
-      <th class="text">Post Blogs</th>
-      <th class="text">Manage Profiles</th>
+      <th class="text">Attēls</th>
+      <th class="text">Vārds</th>
+      <th class="text">Galerija</th>
+      <th class="text">Tīmekļa lapas</th>
+      <th class="text">Ziņas</th>
+      <th class="text">Pārvaldītāji</th>
     </tr>
   </thead>
   <tbody id="userList">
     <% users.forEach(user => { %>
       <tr>
-        <td></td>
+        <td><img src="<%= user.profilePicture %>" alt="Profile Picture"></td>
         <td><%= user.username %></td>
-        <td><%= user.permissions.uploadFiles %></td>
-        <td><%= user.permissions.makePages %></td>
-        <td><%= user.permissions.postBlogs %></td>
-        <td><%= user.permissions.manageProfiles %></td>
+        <td class="<%= user.permissions.uploadFiles ? 'allowed' : 'not-allowed' %>">
+          <%= user.permissions.uploadFiles ? 'Atļauts' : 'Neatļauts' %>
+        </td>
+        <td class="<%= user.permissions.makePages ? 'allowed' : 'not-allowed' %>">
+          <%= user.permissions.makePages ? 'Atļauts' : 'Neatļauts' %>
+        </td>
+        <td class="<%= user.permissions.postBlogs ? 'allowed' : 'not-allowed' %>">
+          <%= user.permissions.postBlogs ? 'Atļauts' : 'Neatļauts' %>
+        </td>
+        <td class="<%= user.permissions.manageProfiles ? 'allowed' : 'not-allowed' %>">
+          <%= user.permissions.manageProfiles ? 'Atļauts' : 'Neatļauts' %>
+        </td>
       </tr>
     <% }); %>
   </tbody>
@@ -102,16 +104,12 @@
 
 <script>
   function openPopup(popupId) {
-    const popup = document.getElementById(popupId);
+    var popup = document.getElementById(popupId);
     popup.showModal();
   }
 
-  const closeButtons = document.querySelectorAll('.popup-close');
-
-  closeButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const dialog = button.closest('dialog');
-      dialog.close();
-    });
-  });
+  function closePopup(popupId) {
+    var popup = document.getElementById(popupId);
+    popup.close();
+  }
 </script>

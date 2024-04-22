@@ -1,74 +1,183 @@
+<link rel="stylesheet" href="css/content.css">
+<script src="https://unpkg.com/grapesjs"></script>
+<link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet">
+<script src="https://unpkg.com/grapesjs-blocks-basic@latest"></script>
+<script src="/js/grapesjs-blocks-table.min.js"></script>
 <style>
-  header{
+  .checkbox-custom {
+    position: relative;
+    width: 20px; /* Adjust the size as needed */
+    height: 20px; /* Adjust the size as needed */
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+  }
+
+  .checkbox-custom:checked {
+    background-color: #28a745; /* Green background for checked state */
+  }
+
+  .checkbox-custom:checked::after {
+    content: '\2713'; /* Checkmark character */
+    color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px; /* Adjust the size as needed */
+    line-height: 1;
+  }
+
+  .checkbox-custom:not(:checked)::after {
+    content: 'X'; /* X character for unchecked state */
+    color: #dc3545;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px; /* Adjust the size as needed */
+    line-height: 1;
+  }
+</style>
+<style>
+  body {
+       margin: 0;
+       font-family: Arial, sans-serif;
+       overflow: hidden;
+   }
+   #gjs {
+       height: 90vh;
+   }
+   #details {
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       background-color: #444;
+       color: #fff;
+       height: 10vh;
+   }
+   #details h1 {
+       margin: 0 10px 0 0;
+       font-size: 16px;
+   }
+   #details input,
+   #details select {
+       height: 30px;
+       margin-right: 50px;
+       padding: 5px;
+       border: none;
+       border-radius: 3px;
+   }
+   #details button {
+       color: #fff;
+       border: none;
+       border-radius: 5px;
+       margin-right: 10px;
+       padding: 10px 20px;
+       cursor: pointer;
+       transition: background-color 0.3s ease;
+       background-color: var(--button-bg-color);
+   }
+
+   #details button:hover {
+       background-color: var(--button-hover-bg-color);
+   }
+
+  dialog {
+    width: 85vw;
+    height: 93vh;
+    margin-top: 7vh;
+    margin-left: 15vw;
     padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 60px;
-    color: #fff;
-    background-color: #555555;
-  }
-  button{
-    color: #fff;
-  }
-  table {
-    margin: 40px;
-    width: calc(100% - 80px);
-    border-collapse: collapse;
-  }
-  table .text{
-    padding: 10px;
-    text-align: left;
-  }
-  table .checkbox{
-    width: 50px;
-    padding: 10px;
-    text-align: center;
-  }
-  table td{
-    padding: 10px;
-    border-top: 1px solid #555555;
-  }
-  table .center{
-    text-align: center;
+    overflow-y: hidden;
+    outline: none;
+    border: none;
   }
 </style>
 
 <header style="display: flex; justify-content: space-between; align-items: center;">
-  <h1>Blogs</h1>
-  <div style="display: flex;">
-    <button style="background-color: Green; margin-right: 10px;" onclick="location.href='/admin/blogs/create'">Add new</button>
-    <button style="background-color: Red; margin-right: 10px;" onclick="deleting()">Delete</button>
-    <button style="background-color: rgb(175, 175, 15); margin-right: 10px;" onclick="unpublish()">Un publish</button>
-    <button style="background-color: Green;" onclick="publish()">Publish</button>
+  <h1>Ziņas</h1>
+  <div class="header-actions">
+    <div class="blog-actions">
+      <button style="--button-bg-color: #007BFF; --button-hover-bg-color: #0056b3;" onclick="openPopup()">Jauns blogs</button>
+      <button style="--button-bg-color: #dc3545; --button-hover-bg-color: #b02a37;" onclick="deleting()">Izdzēst</button>
+      <button style="--button-bg-color: #ffc107; --button-hover-bg-color: #d39e00;" onclick="unpublish()">Nepabeigts</button>
+      <button style="--button-bg-color: #28a745; --button-hover-bg-color: #218838;" onclick="publish()">Pabeigts</button>
+    </div>
   </div>
 </header>
 
 <table>
-  <thead style="background-color: #555555; color: #fff;">
+  <thead>
     <tr>
-      <th class="checkbox">Select</th>
-      <th class="text">Title</th>
-      <th class="text">Author</th>
-      <th class="text">eventDate</th>
-      <th class="text">Date</th>
-      <th class="checkbox">Published</th>
+      <th class="checkbox">Izvēlētas</th>
+      <th class="text">Saturs</th>
+      <th class="text">Autors</th>
+      <th class="text">Notikuma datums</th>
+      <th class="text">Izveidots</th>
+      <th class="checkbox">Pabeigts</th>
     </tr>
   </thead>
   <tbody>
     <% blogs.forEach(blog => { %>
       <tr>
-          <td class="center"><input type="checkbox" name="select" value="<%= blog._id %>"></td>
-          <td><%= blog.title %></td>
-          <td><%= blog.author %></td>
-          <td><%= new Date(blog.eventDate).toLocaleDateString() %></td>
-          <td><%= new Date(blog.date).toLocaleString() %></td>
-          <td class="center"><input type="checkbox" <%= blog.published ? 'checked' : '' %> name="publish" disabled></td>
+        <td class="center"><input type="checkbox" name="select" value="<%= blog._id %>"></td>
+        <td><%= blog.title %></td>
+        <td><%= blog.author %></td>
+        <td><%= new Date(blog.eventDate).toLocaleDateString() %></td>
+        <td><%= new Date(blog.date).toLocaleString() %></td>
+        <td class="center"><input type="checkbox" class="checkbox-custom" <%= blog.published ? 'checked' : '' %> name="publish" disabled></td>
       </tr>
-  <% }) %>
+    <% }) %>
   </tbody>
 </table>
 
+<dialog id="popup">
+  <div id="gjs"></div>
+  <form id="details" action="/admin/blogs/create" method="POST">
+    <h1>Virsraksts:</h1><input type="text" name="title" required>
+    <h1>Notikuma diena:</h1><input type="date" name="eventDate">
+    <h1>Pabeigts:</h1><input type="checkbox" name="finished">
+    <input type="hidden" name="html" id="htmlInput">
+    <input type="hidden" name="css" id="cssInput">
+    <button style="--button-bg-color: #28a745; --button-hover-bg-color: #218838;" type="submit">Izveidot</button>
+  </form>
+</dialog>
+
 <script>
+  const editor = grapesjs.init({
+    container : '#gjs',
+    fromElement : true,
+    height : '90%',
+    width : '100%',
+    storageManager: false,
+    plugins: ['gjs-blocks-basic', 'grapesjs-blocks-table']
+  });
+  //Fetch image URLs from the server
+  fetch('/api/images')
+    .then(response => response.json())
+    .then(imageUrls => {
+      // Add images to GrapeJS Asset Manager
+      imageUrls.forEach((imageUrl, index) => {
+        editor.AssetManager.add({
+          category: 'images',
+          src: imageUrl
+        });
+      });
+    })
+    .catch(error => console.error('Error fetching image URLs:', error));
+
+  document.getElementById('details').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+    
+    document.getElementById('htmlInput').value = editor.getHtml();
+    document.getElementById('cssInput').value = editor.getCss();
+
+    this.submit();
+  });
+
   const checkboxes = document.getElementsByName('select');
 
   function checkboxesValue() {
@@ -86,7 +195,7 @@
     fetch('/admin/blogs/publish', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(checkboxesValue()),
     })
@@ -98,7 +207,7 @@
     fetch('/admin/blogs/unpublish', {
     method: 'POST',
     headers: {
-        'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(checkboxesValue()),
     })
@@ -110,11 +219,22 @@
     fetch('/admin/blogs/delete', {
     method: 'DELETE',
     headers: {
-        'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(checkboxesValue()),
     })
     .then(response => response.json())
     .catch(error => console.error('Error:', error));
   }
+
+  function openPopup() {
+  let popup = document.getElementById("popup");
+  popup.showModal();
+}
+const popup = document.getElementById("popup");
+  popup.addEventListener('click', () => popup.close());
+const gjs_div= document.getElementById('gjs');
+  gjs_div.addEventListener('click', (event) => event.stopPropagation());
+const form = document.getElementById('details');
+  form.addEventListener('click', (event) => event.stopPropagation());
 </script>
