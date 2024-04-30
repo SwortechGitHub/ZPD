@@ -426,6 +426,7 @@ router.post("/login", async (req, res) => {
       req.session.imagePath = user.profilePicture;
 
       req.session.save(() => {
+        console.log("Session made");
         res.redirect("/admin");
       });
     } else {
@@ -444,6 +445,7 @@ router.get("/logout", (req, res) => {
       console.error(err);
       res.status(500).send("Internal Server Error");
     } else {
+      console.log("Session killed");
       res.redirect("/admin/login");
     }
   });
