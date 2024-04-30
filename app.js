@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
 const fs = require('fs');
 
 // Import the mongodb models
